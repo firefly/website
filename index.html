@@ -1,0 +1,156 @@
+<html>
+    <head>
+        <title>Firefly - Coming soon...</title>
+        <style type="text/css">
+            html, body, canvas {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                background: #022d40;
+                color: #fff;
+            }
+
+            .container {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 100%;
+                width: 100%;
+            }
+
+            .content {
+                background: rgba(0, 0, 0, 0.58);
+                padding: 60px 40px;
+                border-radius: 16px;
+                left: 50%;
+                top: 50%;
+                margin-top: -45px; /* (groundHeight[150] - top1LoopHeight[60]) / 2 */
+                position: relative;
+                transform: translate(-50%, -50%);
+                -webkit-transform: translate(-50%, -50%);
+                -moz-transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%);
+                max-width: 720px;
+            }
+
+            .content .header {
+                color: #dedeff;
+                font-size: 2.0em;
+            }
+
+            .content .story {
+                color: #ceceef;
+                font-family: sans-serif;
+                font-size: 1.2em;
+                line-height: 3ex;
+                padding: 20px 0;
+            }
+            .content .byline {
+                color: #bebedf;
+                font-style: italic;
+                text-align: right;
+            }
+
+            .fullscreen {
+                overflow: hidden;
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+
+            #ground {
+                position: fixed;
+                bottom: 0;
+                height: 150px;
+                left: 0;
+                right: 0;
+                width: 100%;
+                background: url(./images/ground.png) center repeat-x;
+                background-size: contain;
+            }
+
+            #top-0 {
+                position: fixed;
+                top: 0;
+                height: 125px;
+                left: 0;
+                width: 225px;
+                background: url(./images/top-0.png) no-repeat;
+                background-size: contain;
+            }
+
+            #top-1 {
+                position: fixed;
+                top: 0;
+                height: 162px;
+                right: 0;
+                width: 367px;
+                background: url(./images/top-1.png) no-repeat;
+                background-size: contain;
+            }
+
+            #lightshaft-0 {
+                position: fixed;
+                top: 0;
+                height: 462px;
+                left: 80px;
+                width: 192px;
+                background: url(./images/lightshaft-0.png) no-repeat;
+                background-size: contain;
+            }
+
+            #lightshaft-1 {
+                position: fixed;
+                top: 0;
+                height: 561px;
+                right: 170px;
+                width: 236px;
+                background: url(./images/lightshaft-1.png) no-repeat;
+                background-size: contain;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="ground"></div>
+        <div class="fullscreen"><canvas id="firefly-field"></canvas></div>
+        <div id="lightshaft-0"></div>
+        <div id="lightshaft-1"></div>
+        <div id="top-0"></div>
+        <div id="top-1"></div>
+        <div class="container">
+            <div class="content">
+                <div class="header">Once upon a time...</div>
+                <div class="story">
+                    When fiat ruled the world, a glimmer of light, by the
+                    name of <b>Ethereum</b>, flickered through the fog &mdash; like a
+                    <b>Firefly</b> &mdash;  and so began its epic tale; the beginning
+                    of the age of <i>ether</i>...
+                </div>
+                <div class="byline">
+                     ~ The Chronicles of Firefly
+                </div>
+             </div>
+        </div>
+
+        <script type="text/javascript" src="./scripts/firefly.js"></script>
+        <script type="text/javascript" src="./scripts/utils.js"></script>
+
+        <script type="text/javascript">
+            var fireflyField = new FireflyField(document.getElementById('firefly-field'));
+
+            ready(function() {
+                fireflyField.start();
+            });
+
+            resize(function() {
+                fireflyField.resize(window.innerWidth, window.innerHeight);
+            });
+
+        </script>
+    </body>
+</html>
