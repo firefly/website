@@ -1,8 +1,14 @@
 function ready(fn) {
+    var done = false;
+    function func() {
+        if (done) { return; }
+        done = false;
+        setTimeout(fn, 0);
+    }
     if (document.readyState != 'loading') {
-        fn();
+        func();
     } else {
-        document.addEventListener('DOMContentLoaded', fn);
+        document.addEventListener('DOMContentLoaded', func);
     }
 }
 

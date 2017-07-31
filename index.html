@@ -144,6 +144,7 @@
             var fireflyField = new FireflyField(document.getElementById('firefly-field'));
 
             ready(function() {
+                fireflyField.resize(window.innerWidth, window.innerHeight);
                 fireflyField.start();
             });
 
