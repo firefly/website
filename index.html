@@ -1,129 +1,396 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <title>Firefly - Coming soon...</title>
+        <title>Firefly</title>
         <style type="text/css">
             html, body, canvas {
-                margin: 0;
-                padding: 0;
+                margin:0;
+                padding:0;
             }
+
             body {
-                background: #022d40;
+                background: #121e2a;
+                dddbackground: #111d23;
                 color: #fff;
             }
 
-            .container {
-                position: fixed;
-                top: 0;
+            .clearfix {
+                clear: both;
+            }
+
+            /* body.show-modal - hide the content, show the curtain and modal */
+
+            body.show-modal .modal {
+                opacity: 1;
+            }
+
+            body.show-modal #curtain {
+                opacity: 0.5;
+                pointer-events: auto;
+            }
+
+            body.show-modal .container {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .fullscreen {
                 bottom: 0;
+                dddheight: 100%;
+                position: fixed;
                 left: 0;
                 right: 0;
-                height: 100%;
-                width: 100%;
+                top: 0;
+                dddwidth: 100%;
+            }
+
+            a.link {
+                border-bottom: 1px dashed #aeaecf;
+                color: #aeaecf;
+                text-decoration: none;
+            }
+
+            a.link:hover {
+                border-bottom: 1px dashed #888;
+                color: #fff;
+            }
+
+            .icon {
+                background-size: contain;
+                display: inline-block;
+                height: 64px;
+                margin-right: 64px;
+                dddopacity: 0.8;
+                position: relative;
+                transition: transform 0.2s linear 0.1s;
+                width: 64px;
+            }
+
+            .icon:hover {
+                dddopacity: 1;
+                transition: transform 0.1s linear;
+                transform: scale(1.1);
+            }
+
+            .icon span {
+                color: #fff;
+                display: block;
+                font-size: 14px;
+                font-weight: bold;
+                height: 20px;
+                line-height: 26px;
+                position: absolute;
+                bottom: -20px;
+                text-align: center;
+                width: 64px;
+            }
+
+            body.animated #curtain.fullscreen {
+                transition: opacity 0.3s linear;
+            }
+
+            #curtain.fullscreen {
+                background-color: #000;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .modal > div {
+                background-color: rgba(0, 0, 0, 0.5);
+                border: 5px solid #ceceef;
+                cursor: pointer;
+                padding: 3px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                text-align: center;
+                transform: translate(-50%, -50%);
+            }
+
+            .modal img {
+                display: block;
+            }
+
+            body.animated .modal.fullscreen {
+                transition: opacity 0.3s linear;
+            }
+
+            .modal.fullscreen {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            #callout {
+                background-color: rgba(255, 255, 255, 0.7);
+                border-bottom: 2px solid #222;
+                border-left: 3px solid #333;
+                border-right: 3px solid #333;
+                border-top: 2px solid #222;
+                bottom: 25px;
+                color: #222;
+                font-family: sans-serif;
+                font-weight: bold;
+                left: 0px;
+                padding: 10px 0;
+                position: absolute;
+                right: 0px;
+                text-align: center;
+            }
+
+            body.animated .container.fullscreen {
+                transition: opacity 0.3s linear;
+            }
+
+            body.animated .content {
+                transition: opacity 0.75s linear, transform 0.75s ease-out;
             }
 
             .content {
                 background: rgba(0, 0, 0, 0.58);
-                padding: 60px 40px;
+                padding: 70px 40px 30px;
                 border-radius: 16px;
                 left: 50%;
                 top: 50%;
-                margin-top: -45px; /* (groundHeight[150] - top1LoopHeight[60]) / 2 */
-                position: relative;
+                margin-top: -25px;
+                position: absolute;
                 transform: translate(-50%, -50%);
                 -webkit-transform: translate(-50%, -50%);
                 -moz-transform: translate(-50%, -50%);
                 -ms-transform: translate(-50%, -50%);
-                max-width: 720px;
+                width: 720px;
+            }
+
+            body.animated .content.next {
+                transition: opacity 0.5s linear, transform 0.5s ease-out;
+            }
+
+            .content.next {
+                opacity: 0;
+                pointer-events: none;
+                transform: translate(-30%, -50%);
+                ddd-webkit-transform: scaleX(2) translate(-10%, -50%);
+                ddd-moz-transform: scaleX(2) translate(-10%, -50%);
+                ddd-ms-transform: scaleX(2) translate(-10%, -50%);
+            }
+
+            body.animated .content.previous {
+                transition: opacity 0.5s linear, transform 0.5s ease-out;
+            }
+
+            .content.previous {
+                opacity: 0;
+                pointer-events: none;
+                transform: translate(-70%, -50%);
+                ddd-webkit-transform: translate(-100%, -50%);
+                ddd-moz-transform: translate(-100%, -50%);
+                ddd-ms-transform: translate(-100%, -50%);
+            }
+
+            .content .nav {
+                font-family: sans-serif;
+                font-weight: bold;
+                position: absolute;
+                top: 17px;
+                width: 720px;
+            }
+
+            body.animated .content .nav div {
+                transition: color 0.5s linear, transform 0.3s ease-out;
+            }
+
+            .content .nav div {
+                color: #8f8f7f;
+                cursor: pointer;
+                display: inline-block;
+                float: left;
+                width: 16%;
+                text-align: center;
+            }
+
+            .content .nav div.disable {
+                pointer-events: none;
+                cursor: auto;
+                opacity: 0.3;
+            }
+
+            body.animated .content .nav div:hover {
+                transition: color 0.1s linear, transform 0.1s ease-out 0.1s;
+            }
+
+            .content .nav div:hover {
+                color: #ffffde;
+                transform: scale(1.1);
             }
 
             .content .header {
                 color: #dedeff;
-                font-size: 2.0em;
+                font-size: 1.7em;
             }
 
             .content .story {
                 color: #ceceef;
                 font-family: sans-serif;
-                font-size: 1.2em;
-                line-height: 3ex;
+                font-size: 1.0em;
                 padding: 20px 0;
+                line-height: 3ex;
             }
+
             .content .byline {
                 color: #bebedf;
                 font-style: italic;
                 text-align: right;
             }
 
-            .fullscreen {
-                overflow: hidden;
-                position: fixed;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
+            .content ul {
+                margin: 10px 0 0;
             }
 
-            #ground {
+            .content .gap {
+                clear: both;
+                height: 32px;
+            }
+
+            body.animated .content .photos div {
+                transition: transform 0.1s ease-out;
+            }
+
+            .content .photos div {
+                border: 2px solid #ceceef;
+                background-size: cover;
+                cursor: pointer;
+                float: left;
+                height: 100px;
+                margin-left: 32px;
+                opacity: 0.7;
+                width: 150px;
+            }
+
+            body.animated .content .photos div:hover {
+                transition: transform 0.1s ease-out;
+            }
+
+            .content .photos div:hover {
+                box-shadow: 0 0 25px rgba(206, 206, 239, 0.2);
+                ddd-background-size: 110% 110%;
+                opacity: 1;
+                transform: scale(1.05);
+            }
+
+            .content .photos div:first-child {
+                margin-left: 0;
+            }
+
+            body.animated #fireflies {
+                transition: transform 0.75s ease-out;
+            }
+
+            #fireflies {
+                left: 0;
+                position: absolute;
+                top: 0;
+                z-index:10;
+            }
+
+            body.animated .background {
+                transition: transform 0.75s ease-out;
+            }
+
+            .video {
+                border: 2px solid #ceceef;
+                display: inline-block;
+                padding: 3px;
+                position: relative;
+                margin-left: 50%;
+                transform: translateX(-50%);
+            }
+
+            iframe {
+                display: block;
+            }
+
+            #background-far {
+                bottom: 0px;
                 position: fixed;
-                bottom: 0;
-                height: 150px;
+                height: 200px;
                 left: 0;
                 right: 0;
                 width: 100%;
-                background: url(./images/ground.png) center repeat-x;
-                background-size: contain;
             }
 
-            #top-0 {
+            #background-top {
                 position: fixed;
-                top: 0;
-                height: 125px;
+                top: 10px;
+                height: 470px;
                 left: 0;
-                width: 225px;
-                background: url(./images/top-0.png) no-repeat;
-                background-size: contain;
-            }
-
-            #top-1 {
-                position: fixed;
-                top: 0;
-                height: 162px;
                 right: 0;
-                width: 367px;
-                background: url(./images/top-1.png) no-repeat;
-                background-size: contain;
+                width: 100%;
             }
 
-            #lightshaft-0 {
+            #background-ground {
                 position: fixed;
-                top: 0;
-                height: 462px;
-                left: 80px;
-                width: 192px;
-                background: url(./images/lightshaft-0.png) no-repeat;
-                background-size: contain;
+                bottom: 0;
+                height: 240px;
+                left: 0;
+                right: 0;
+                width: 100%;
             }
 
-            #lightshaft-1 {
-                position: fixed;
-                top: 0;
-                height: 561px;
-                right: 170px;
-                width: 236px;
-                background: url(./images/lightshaft-1.png) no-repeat;
-                background-size: contain;
+            .item {
+                position: absolute;
             }
+
+            .trigger {
+                background: rgba(0, 0, 0, 0.58);
+                border: 2px solid #8f8f7f;
+                border-radius: 15px;
+                color: #ffffde;
+                cursor: pointer;
+                display: inline-block;
+                font-family: sans-serif;
+                font-size: 18px;
+                font-weight: bold;
+                height: 60px;
+                line-height: 60px;
+                position: fixed;
+                right: 25px;
+                text-align: center;
+                text-decoration: none;
+                top: 25px;
+                transition: transform 0.1s ease-out 0.1s;
+                width: 140px;
+            }
+
+            .trigger:hover {
+                background: rgba(0, 0, 0, 0.78);
+                border: 2px solid #ffffde;
+                box-shadow: 0 0 15px 2px rgba(255, 255, 222, 0.2);
+                transform: scale(1.05);
+                transition: transform 0.1s ease-out;
+            }
+
+            .copyright {
+                bottom: 5px;
+                font-family: sans-serif;
+                font-size: 10px;
+                left: 0;
+                opacity: 0.2;
+                position: fixed;
+                right: 0;
+                text-align: center;
+            }
+
         </style>
     </head>
     <body>
-        <div id="ground"></div>
-        <div class="fullscreen"><canvas id="firefly-field"></canvas></div>
-        <div id="lightshaft-0"></div>
-        <div id="lightshaft-1"></div>
-        <div id="top-0"></div>
-        <div id="top-1"></div>
-        <div class="container">
-            <div class="content">
+        <div class="background" id="background-far"> </div>
+        <div class="background" id="background-ground"> </div>
+        <div class="fullscreen"><canvas id="fireflies"></canvas></div>
+        <div class="background" id="background-top"> </div>
+
+        <div class="container fullscreen">
+
+            <!-- Initial teaser text; remove this at some point in the future -->
+            <div class="content previous">
                 <div class="header">Once upon a time...</div>
                 <div class="story">
                     When fiat ruled the world, a glimmer of light, by the
@@ -134,23 +401,274 @@
                 <div class="byline">
                      ~ The Chronicles of Firefly
                 </div>
-             </div>
+            </div>
+
+            <div class="content">
+                <!-- Only one nav; it is moved during focus(). Make sure this is in the initial content -->
+                <div class="nav" id="nav">
+                    <div>Teaser</div>
+                    <div>About</div>
+                    <div>Demo</div>
+                    <div>Our Sale</div>
+                    <div>Photos</div>
+                    <div>Links</div>
+                </div>
+                <div class="header">What is a Firefly?</div>
+                <div class="story">
+                    The Firefly is an open source $5 DIY air-gapped hardware wallet you can build at home.
+                </div>
+                <div class="story">
+                    <b>Features:</b>
+                    <ul>
+                        <li><b>$5 in parts</b> &mdash; An Arduino, nRF24L01+, OLED display and random bits and pieces</li>
+                        <li><b>Air-gapped using QR codes</b> &mdash; like the insect, it must be seen to be heard</li>
+                        <li><b>Build your own</b> &mdash; Open source code (MIT) and hardware design make it easy to customize</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content next">
+                <div class="header">How does it work?</div>
+                <div class="story">
+                    <div class="video"><iframe width="560" height="315" src="https://www.youtube.com/embed/RcdgGPVPT-Y?ecver=1&enablejsapi=1" frameborder="0" allowfullscreen></iframe></div>
+                </div>
+            </div>
+
+            <div class="content next">
+                <div class="header">What do I get?</div>
+                <div class="story">
+                    <ul>
+                        <li><b><i>yourNameHere</i>.firefly.eth</b> &mdash; use it today and target your own Firefly tomorrow</li>
+                        <li><b>Substantial discounts</b> &mdash; on DIY kits, events and with enough funding, the <i>"Firefly Teensy"</i></li>
+                        <li><b>Early access</b> &mdash; to Hackathon kits and tickets, limited editions, et cetera</li>
+                    </ul>
+                </div>
+                <div class="story">
+                    <b>Why?</b>
+                    <ul>
+                        <li>Unlike an ICO, you get something new and shiny &mdash; <b>today</b>!</li>
+                        <li><b>Crowd Fund</b> &mdash; help fund the release of our open source, low&#x2011;cost, tiny, rugged, water&#x2011;proof, air&#x2011;gapped, retail <i>"Firefly Teensy"</i> hardware wallet keychain (with optional fire-proof "case")</li>
+                        <li><b>Builds Community</b> &mdash; promotes awareness, connecting users and devlopers</li>
+                        <li><b>Not an investment</b> &mdash; no rush of get-rich-quick whales; names are personal, not ICO "assets"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content next">
+                <div class="header">Show and tell?</div>
+                <div class="story">
+                    <div class="clearfix"></div>
+                    <div class="photos">
+                        <div data-url="photos/prototype.jpg" data-width="1000" data-height="1333" style="background-image: url(./photos/prototype-thumb.jpg);" title="An early ATmega2560 prototype during the BlockGeeks Labs Hackathon."></div>
+                        <div data-url="photos/cheque.jpg" data-width="1333" data-height="1000" style="background-image: url(./photos/cheque-thumb.jpg);" data-title="Jason from BlockGeeks Labs presenting the award cheque.\n( RicMoo | Jason | Loo )" title="Jason from BlockGeeks Labs presenting the award cheque."></div>
+                        <div data-url="photos/prototype328.jpg" data-width="1333" data-height="1000" style="background-image: url(./photos/prototype328-thumb.jpg);" title="An ATmega328 prototype showing a signed transaction."></div>
+                        <div data-url="photos/sourcecode.jpg" data-width="1700" data-height="1000" style="background-image: url(./photos/sourcecode-thumb.jpg);" title="Arduino C++ source code and libraries."></div>
+                    </div>
+                    <div class="gap"></div>
+                    <div class="photos">
+                        <div data-url="photos/sketchup.jpg" data-width="1600" data-height="1000" style="background-image: url(./photos/sketchup-thumb.jpg);" title="Prototype SketchUp 3D model for 3D printing."></div>
+                        <div data-url="photos/layout.jpg" data-width="1333" data-height="1000" style="background-image: url(./photos/layout-thumb.jpg);" title="The components and internal layout."></div>
+                        <div data-url="photos/scanning.jpg" data-width="1333" data-height="1000" style="background-image: url(./photos/scanning-thumb.jpg);" title="Air-gap scanning a signed transaction with Ethers Wallet."></div>
+                        <div data-url="photos/firefly.jpg" data-width="1040" data-height="780" style="background-image: url(./photos/firefly-thumb.jpg);" title="Working prototype in the credit card form-factor."></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+            <div class="content next">
+                <div class="header">Where can I find out more?</div>
+                <div class="story">
+                    <a class="icon" style="background-image: url(./images/icon-github.png)" href="https://github.com/firefly"><span>@firefly</span></a>
+                    <a class="icon" style="background-image: url(./images/icon-twitter.png)"href="https://twitter.com/hi_firefly"><span>@hi_firefly</span></a>
+                </div>
+                <div class="story">
+                    <b>Other Links</b>
+                    <ul>
+                        <li>Blockgeeks Labs Official <a class="link" href="http://www.bglhackathon.com/">Hackathon Site</a></li>
+                        <li>Registrar contract for <i>firefly.eth</i> verified on <a class="link" href="https://etherscan.io/address/0x6fc21092da55b392b045ed78f4732bff3c580e2c#code">Etherscan</a></li>
+                        <li>Contact us at <a class="link" href="mailto:hi@firefly.city">hi@firefly.city</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
+
+        <a class="trigger" href="https://ethers.io/#!/app-link/contribute.firefly.city" target="_blank">Contribute</a>
+
+        <div class="copyright">Copyright &copy;2017 Richard Moore. Some rights reserved. See GitHub.</div>
+
+        <div id="curtain" class="fullscreen"> </div>
+        <div class="modal fullscreen"><div><div id="callout"></div><img id="modal-img" /></div></div>
+
 
         <script type="text/javascript" src="./scripts/firefly.js"></script>
         <script type="text/javascript" src="./scripts/utils.js"></script>
 
         <script type="text/javascript">
-            var fireflyField = new FireflyField(document.getElementById('firefly-field'));
+            var fireflyField = new FireflyField(document.getElementById('fireflies'));
 
             ready(function() {
-                fireflyField.resize(window.innerWidth, window.innerHeight);
+                fireflyField.resize(window.innerWidth + 500, window.innerHeight);
                 fireflyField.start();
+                document.body.classList.add('animated');
             });
 
             resize(function() {
-                fireflyField.resize(window.innerWidth, window.innerHeight);
+                fireflyField.resize(window.innerWidth + 500, window.innerHeight);
             });
+        </script>
+
+        <script type="text/javascript">
+            (function() {
+                var topics = [ 'teaser', 'about', 'demo', 'funding', 'photos', 'links' ];
+                var nav = document.getElementById('nav');
+                var modalImg = document.getElementById('modal-img');
+                var callout = document.getElementById('callout');
+                var curtain = document.getElementById('curtain');
+
+                var fireflies = document.getElementById('fireflies');
+                var far = document.getElementById('background-far');
+                var top = document.getElementById('background-top');
+                var ground = document.getElementById('background-ground');
+
+                function add(el, item) {
+                    var img = document.createElement('img');
+                    if (item.opacity != 1) {
+                        img.style.opacity = item.opacity;
+                    }
+                    img.style.transform =
+                        "translate(" + (100 + item.x) + "px, " + item.y + "px)" +
+                        (item.r ? ("rotate(" + item.r + "deg) "): "");
+                    img.src = './world/' + item.name + '.png';
+                    img.classList.add('item');
+                    el.appendChild(img);
+
+                    return img;
+                }
+
+                var dataTop = [{"opacity": 0.4, "y": -22.599999999999994, "r": -18, "name": "moonlight_3", "x": 25.599999999999994}, {"opacity": 0.4, "y": -25.0, "r": -20, "name": "moonlight_3", "x": 403.59999999999997}, {"opacity": 0.4, "y": -20.799999999999983, "r": 5, "name": "moonlight_5", "x": 567.1999999999999}, {"opacity": 0.4, "y": -30.399999999999977, "r": -20, "name": "moonlight_5", "x": 865.4}, {"opacity": 0.4, "y": -39.39999999999998, "r": 20, "name": "moonlight_5", "x": 977.0}, {"opacity": 0.4, "y": 12.200000000000017, "r": 15, "name": "moonlight_3", "x": 1241.2}, {"opacity": 0.4, "y": -21.399999999999977, "r": 18, "name": "moonlight_3", "x": 1723.0}, {"y": -50.0, "x": -72.5, "r": 0.0, "name": "tree_int_bough_3"}, {"y": -25.799999999999955, "x": 61.8, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -58.049999999999955, "x": 345.59999999999997, "r": 0.0, "name": "liana_1"}, {"y": -10.650000000000006, "x": 368.4, "r": 0.0, "name": "liana_2"}, {"y": -10.199999999999989, "x": 386.65, "r": 0.0, "name": "liana_4"}, {"y": -43.39999999999998, "x": 554.1999999999999, "r": 0.0, "name": "tree_int_bough_3"}, {"y": -12.449999999999989, "x": 635.1, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -66.44999999999999, "x": 888.5999999999999, "r": 0.0, "name": "liana_1"}, {"y": -40.19999999999999, "x": 813.3, "r": 0.0, "name": "liana_2"}, {"y": -9.0, "x": 1063.0, "r": 0.0, "name": "liana_4"}, {"y": -15.599999999999994, "x": 1749.0, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -15.449999999999989, "x": 1808.4351562499999, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -19.25, "x": 1690.1499999999999, "r": 180.0, "name": "ground_plant_1"}, {"y": -6.75, "x": 1726.943359375, "r": 0.0, "name": "liana_4"}, {"y": 0.5999999999999943, "x": 598.8755493164062, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -47.549999999999955, "x": 421.74249267578125, "r": 0.0, "name": "liana_5"}, {"y": -30.899999999999977, "x": 990.1499999999999, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -25.399999999999977, "x": 1168.35, "r": 0.0, "name": "liana_6"}, {"y": -24.899999999999977, "x": 805.35, "r": 0.0, "name": "tree_int_bough_5"}, {"y": 3.0, "x": 1167.25, "r": 0.0, "name": "liana_4"}, {"y": -11.25, "x": 1122.4327514648437, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -33.89999999999998, "x": 1249.0, "r": 0.0, "name": "liana_5"}, {"y": -16.649999999999977, "x": 1244.7331420898438, "r": 0.0, "name": "tree_int_bough_5"}, {"y": -21.19999999999999, "x": 1201.5, "r": 0.0, "name": "liana_6"}, {"y": -23.549999999999955, "x": 1184.55, "r": 0.0, "name": "tree_int_bough_5"}];
+                dataTop.forEach(function(item) {
+                    add(top, item);
+                });
+
+                var dataFar = [{"y": -163, "x": -628, "name": "tree_10"}, {"y": -325, "x": -425, "name": "tree_11"}, {"y": -163, "x": -214, "name": "tree_12"}, {"y": -199, "x": -19, "name": "tree_13"}, {"y": -207, "x": 136, "name": "tree_14"}, {"y": -260, "x": 327, "name": "tree_5"}, {"y": -205, "x": 664, "name": "tree_7"}, {"y": -117, "x": 799, "name": "zutto_tree_2"}, {"y": -48, "x": 987, "name": "zutto_tree_3"}, {"y": -163, "x": 1247, "name": "tree_10"}, {"y": -325, "x": 1450, "name": "tree_11"}, {"y": -163, "x": 1679, "name": "tree_12"}, {"y": -199, "x": 1810, "name": "tree_13"}, {"y": -207, "x": 2027, "name": "tree_14"}];
+                dataFar.forEach(function(item) {
+                    var el = add(far, item);
+                    //el.style.transform = 'scale(3.5, 3.5) ' + el.style.transform;
+                    //el.style.transform += ' scale(3.5, 3.5)';
+                });
+
+                var dataGround = [{"y": 189.0, "x": -1530.2, "name": "ground-2"}, {"y": 190.0, "x": -1311.6, "name": "ground-0"}, {"y": 178.0, "x": -1093.0, "name": "ground-1"}, {"y": 189.0, "x": -874.4, "name": "ground-2"}, {"y": 190.0, "x": -655.8, "name": "ground-0"}, {"y": 178.0, "x": -437.2, "name": "ground-1"}, {"y": 189.0, "x": -218.6, "name": "ground-2"}, {"y": 190.0, "x": 0.0, "name": "ground-0"}, {"y": 178.0, "x": 218.6, "name": "ground-1"}, {"y": 189.0, "x": 437.2, "name": "ground-2"}, {"y": 190.0, "x": 655.8, "name": "ground-0"}, {"y": 178.0, "x": 874.4, "name": "ground-1"}, {"y": 189.0, "x": 1093.0, "name": "ground-2"}, {"y": 190.0, "x": 1311.6, "name": "ground-0"}, {"y": 178.0, "x": 1530.2, "name": "ground-1"}, {"y": 189.0, "x": 1748.8, "name": "ground-2"}, {"y": 190.0, "x": 1967.3999999999999, "name": "ground-0"}, {"y": 178.0, "x": 2186.0, "name": "ground-1"}, {"y": 189.0, "x": 2404.6, "name": "ground-2"}, {"y": 190.0, "x": 2623.2, "name": "ground-0"}, {"y": 178.0, "x": 2841.7999999999997, "name": "ground-1"}, {"y": 189.0, "x": 3060.4, "name": "ground-2"}, {"y": 190.0, "x": 3279.0, "name": "ground-0"}, {"y": 178.0, "x": 3497.6, "name": "ground-1"}, {"y": 189.0, "x": 3716.2, "name": "ground-2"}, {"y": 155.55, "x": -36.400000000000006, "r": 174.0, "name": "grass-top-0"}, {"y": 156.85, "x": 38.44999999999999, "r": 176.0, "name": "grass-top-1"}, {"y": 145.25, "x": -91.25, "r": 180.0, "name": "grass-top-2"}, {"y": 151.8, "x": 228.64999999999998, "r": 178.0, "name": "grass-top-0"}, {"y": 156.55, "x": 303.8, "r": 175.0, "name": "grass-top-1"}, {"y": 153.05, "x": 457.9371337890625, "r": 1.0, "name": "grass-top-2"}, {"y": 149.4, "x": 125.0, "r": 182.0, "name": "grass-top-0"}, {"y": 167.15, "x": 397.47468261718745, "r": 178.0, "name": "grass-top-2"}, {"y": 133.95, "x": 555.5279052734375, "r": 3.0, "name": "grass-top-0"}, {"y": 153.85000000000002, "x": 603.3070068359375, "r": 0.0, "name": "grass-top-1"}, {"y": 151.75, "x": 743.4070068359375, "r": -4.0, "name": "grass-top-1"}, {"y": 149.60000000000002, "x": 924.4075439453125, "r": 5.0, "name": "grass-top-2"}, {"y": 154.85, "x": 728.8736083984375, "r": 2.0, "name": "grass-top-2"}, {"y": 157.2, "x": 1092.4643310546874, "r": 178.0, "name": "grass-top-0"}, {"y": 148.3, "x": 1211.264404296875, "r": 5.0, "name": "grass-top-1"}, {"y": 159.95, "x": 1166.314404296875, "r": -2.0, "name": "grass-top-2"}, {"y": 144.45, "x": 1309.5486816406249, "r": 5.0, "name": "grass-top-0"}, {"y": 152.2, "x": 1444.098681640625, "r": -2.0, "name": "grass-top-1"}, {"y": 151.10000000000002, "x": 1402.4759277343749, "r": 0.0, "name": "grass-top-2"}, {"y": 149.55, "x": 1574.598681640625, "r": 179.0, "name": "grass-top-0"}, {"y": 157.9, "x": 1653.198681640625, "r": 5.0, "name": "grass-top-1"}, {"y": 150.65, "x": 1743.5486816406249, "r": 183.0, "name": "grass-top-2"}, {"y": 141.9, "x": 1869.3094238281249, "r": 2.0, "name": "grass-top-0"}, {"y": 145.0, "x": 1936.809423828125, "r": -4.0, "name": "grass-top-1"}, {"y": 148.4, "x": 2000.909423828125, "r": -4.0, "name": "grass-top-2"}, {"y": 151.85000000000002, "x": 2109.5499999999997, "r": 179.0, "name": "grass-top-2"}, {"y": 141.3, "x": 2120.15, "r": 174.0, "name": "grass-top-0"}, {"y": 139.3, "x": 367.78876953124995, "r": -6.0, "name": "grass-top-1"}, {"y": 143.15, "x": 609.2012207031249, "r": 4.0, "name": "grass-top-2"}, {"y": 136.60000000000002, "x": 872.6303955078124, "r": 1.0, "name": "grass-top-1"}, {"y": 141.15, "x": 762.467626953125, "r": 176.0, "name": "grass-top-0"}, {"y": 144.4, "x": 1566.25390625, "r": 5.0, "name": "grass-top-1"}, {"y": 138.95, "x": 1719.9039062499999, "r": -2.0, "name": "grass-top-2"}, {"y": 140.3, "x": 1896.60390625, "r": 4.0, "name": "grass-top-2"}, {"y": 136.9, "x": 1006.4065917968749, "r": -2.0, "name": "grass-top-1"}, {"y": 142.75, "x": -246.432080078125, "r": 4.0, "name": "grass-top-1"}, {"y": 160.55, "x": -262.882080078125, "r": 180.0, "name": "grass-top-2"}, {"y": 152.4, "x": -354.4320983886719, "r": 4.0, "name": "grass-top-0"}, {"y": 150.55, "x": -515.8, "r": 0.0, "name": "grass-top-1"}, {"y": 152.15, "x": -646.55, "r": -1.0, "name": "grass-top-2"}, {"y": 136.65, "x": 2259.2884765625, "r": 182.0, "name": "grass-top-0"}, {"y": 152.65, "x": 2292.4384765625, "r": 2.0, "name": "grass-top-1"}, {"y": 139.85000000000002, "x": 2411.8884765625, "r": 180.0, "name": "grass-top-2"}, {"y": 160.95, "x": 2507.8384765625, "r": 5.0, "name": "grass-top-0"}, {"y": 146.65, "x": 2557.9384765625, "r": 5.0, "name": "grass-top-1"}, {"y": 157.7, "x": 2652.5499999999997, "r": 0.0, "name": "grass-top-2"}, {"y": 146.10000000000002, "x": 2702.0, "r": 176.0, "name": "grass-top-0"}, {"y": 153.4, "x": 2739.35, "r": -4.0, "name": "grass-top-1"}, {"y": 155.2, "x": 763.6750610351562, "r": 0.0, "name": "grass_detail_1"}, {"y": 158.3, "x": 1618.95947265625, "r": 0.0, "name": "grass_detail_2"}, {"y": 166.25, "x": 59.61334924697876, "r": 0.0, "name": "grass_detail_3"}, {"y": 143.5, "x": 689.0, "r": 0.0, "name": "grass_detail_4"}, {"y": 167.05, "x": 205.34111328125, "r": 0.0, "name": "grass_stone_2"}, {"y": 158.95, "x": 426.2, "r": 0.0, "name": "grass_texture_4"}, {"y": 174.95, "x": 351.62608032226564, "r": 0.0, "name": "grass_texture_5"}, {"y": 169.9, "x": 721.85, "r": 0.0, "name": "grass_texture_4"}, {"y": 149.9, "x": 914.05, "r": 0.0, "name": "grass_texture_5"}, {"y": 123.0, "x": 1846.789794921875, "r": 0.0, "name": "platform_4"}, {"y": 121.45, "x": 438.59999999999997, "r": 0.0, "name": "grass_guys_1"}, {"y": 128.55, "x": 922.55, "r": 0.0, "name": "grass_guys_2"}, {"y": 164.9, "x": 883.3, "r": 0.0, "name": "grass_stone_1"}, {"y": 153.95, "x": 1070.95, "r": 0.0, "name": "grass_stone_1"}, {"y": 167.95, "x": 1741.85, "r": 0.0, "name": "grass_stone_2"}, {"y": 166.45, "x": 1096.55, "r": 0.0, "name": "grass_stone_2"}, {"y": 117.75, "x": 1380.6734374999999, "r": 0.0, "name": "zutto_platform_2"}, {"y": 104.0, "x": 1925.0099609375, "r": 0.0, "name": "zutto_platform_3"}, {"y": 169.95, "x": 1918.4747070312499, "r": 0.0, "name": "rock_dull_fore1"}, {"y": 167.35000000000002, "x": 1867.5975463867187, "r": 0.0, "name": "rock_dull_fore2"}, {"y": 132.5, "x": -12.38499258756638, "r": 0.0, "name": "rock_dull_fore3"}, {"y": 136.85000000000002, "x": 1023.4775390625, "r": 0.0, "name": "rock_dull_bg1"}, {"y": 150.4, "x": 373.8435791015625, "r": 0.0, "name": "rock_dull_bg2"}, {"y": 152.55, "x": 1579.35, "r": 0.0, "name": "rock_dull_bg3"}, {"y": 165.5, "x": 1403.7, "r": 0.0, "name": "rock_dull_bg4"}, {"y": 124.0, "x": 507.15, "r": 0.0, "name": "plant_fern_1"}, {"y": 121.65, "x": 667.426025390625, "r": 0.0, "name": "plant_fern_2"}, {"y": 129.35000000000002, "x": 683.15, "r": 0.0, "name": "plant_fern_3"}, {"y": 123.45, "x": 1528.85, "r": 0.0, "name": "plant_fern_4"}, {"y": 141.2, "x": 1506.95, "r": 0.0, "name": "plant_fern_5"}, {"y": 114.25, "x": 64.05953440666198, "r": 0.0, "name": "plant_giant_fern_1"}, {"y": 98.94999999999999, "x": 1057.77236328125, "r": 0.0, "name": "plant_giant_fern_1"}, {"y": 132.2, "x": 1362.7, "r": 0.0, "name": "plant_grass_1"}, {"y": 123.5, "x": 987.999267578125, "r": 0.0, "name": "plant_grass_1"}, {"y": 139.2, "x": 1312.8, "r": 0.0, "name": "plant_grass_2"}, {"y": 159.75, "x": 1533.0922119140625, "r": 0.0, "name": "plant_grass_2"}, {"y": 136.95, "x": 1219.8284423828125, "r": 0.0, "name": "plant_grass_3"}, {"y": 141.45, "x": 764.467041015625, "r": 0.0, "name": "plant_grass_3"}, {"y": 125.2, "x": 351.83521728515626, "r": 0.0, "name": "plant_fern_1"}, {"y": 108.0, "x": 649.5, "r": 0.0, "name": "plant_fern_2"}, {"y": 148.4, "x": 359.91607666015625, "r": 0.0, "name": "plant_fern_3"}, {"y": 105.0, "x": 711.5, "r": 0.0, "name": "plant_fern_4"}, {"y": 131.15, "x": 190.5509042466161, "r": 0.0, "name": "plant_fern_5"}, {"y": 152.3, "x": 32.9273864030838, "r": 0.0, "name": "plant_grass_1"}, {"y": 161.15, "x": 566.35, "r": 0.0, "name": "plant_grass_1"}, {"y": 155.25, "x": 846.6, "r": 0.0, "name": "plant_grass_2"}, {"y": 160.65, "x": 1636.08076171875, "r": 0.0, "name": "plant_grass_2"}, {"y": 139.2, "x": 1708.6722900390625, "r": 0.0, "name": "plant_grass_3"}, {"y": 132.0, "x": 926.5, "r": 0.0, "name": "plant_grass_3"}, {"y": 113.9, "x": -133.76339402794838, "r": 0.0, "name": "tree_int_stump_1"}, {"y": 56.05000000000001, "x": 212.71042556762694, "r": 0.0, "name": "tree_int_bough_1"}];
+                dataGround.forEach(function(item) {
+                    add(ground, item);
+                });
+
+                function forEach(root, selector, func) {
+                     if (arguments.length === 2) {
+                        func = selector;
+                        selector = root;
+                        root = document;
+                     }
+                   Array.prototype.forEach.call(root.querySelectorAll(selector), func);
+                }
+
+                function stopPlayer() {
+                    forEach('iframe', function(el) {
+                        el.contentWindow.postMessage('{"event":"command","func":"' + 'pauseVideo' + '","args":""}', '*');
+                    });
+                }
+
+                function focus(index) {
+                    stopPlayer();
+                    forEach(nav, 'div', function(el, i) {
+                        if (i === index) {
+                            el.classList.add('disable');
+                        } else {
+                            el.classList.remove('disable');
+                        }
+                    });
+
+                    forEach('.content', function(el, i) {
+                        if (i < index) {
+                            el.classList.add('previous');
+                            el.classList.remove('next');
+                            el.style.zIndex = 10;
+                        } else if (i > index) {
+                            el.classList.add('next');
+                            el.classList.remove('previous');
+                            el.style.zIndex = 10;
+                        } else {
+                            el.insertBefore(nav, null);
+                            el.classList.remove('previous');
+                            el.classList.remove('next');
+                            el.style.zIndex = 11;
+                        }
+                    });
+
+                    top.style.transform = 'translate(-' + (1.2 * index * 100) + 'px, 0)';
+                    ground.style.transform = 'translate(-' + (index * 100) + 'px, 0)';
+                    fireflies.style.transform = 'translate(-' + (1 * index * 100) + 'px, 0)';
+                    far.style.transform = 'translate(-' + (0.5 * index * 100) + 'px, 0)';
+                }
+
+                function hideModal() {
+                    document.body.classList.remove('show-modal');
+                }
+
+                function showModal(url, width, height) {
+
+                    var maxWidth = 0.7 * window.innerWidth, maxHeight = 0.7 * window.innerHeight;
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+
+                    modalImg.src = url;
+                    //modalImg.style.backgroundImage = 'url(' + url + ')';
+                    //modalImg.style.backgroundSize = 'cover';
+                    modalImg.style.width = width + 'px';
+                    modalImg.style.height = height + 'px';
+
+                    document.body.classList.add('show-modal');
+                }
+
+                curtain.onclick = function() {
+                    hideModal();
+                }
+
+                forEach('.nav div', function(el, i) {
+                    el.onclick = function() {
+                        history.pushState({ index: i }, 'Firefly', '#' + topics[i]);
+                        focus(i);
+                    };
+                });
+
+                window.onpopstate = function(event) {
+                    focus(event.state.index);
+                };
+
+                forEach('.photos div', function(el) {
+                    var title = el.getAttribute('title');
+                    if (el.getAttribute('data-title')) {
+                        title = el.getAttribute('data-title').replace('\\n', '<br />');
+                    }
+                    var url = el.getAttribute('data-url');
+                    var width = parseInt(el.getAttribute('data-width'));
+                    var height = parseInt(el.getAttribute('data-height'));
+                    el.onclick = function() {
+                        callout.innerHTML = title;
+                        showModal(url, width, height);
+                    };
+                });
+
+                var hashIndex = topics.indexOf(location.hash.substring(1));
+                if (hashIndex < 0) { hashIndex = 1; }
+
+                focus(hashIndex);
+            })();
 
         </script>
     </body>
