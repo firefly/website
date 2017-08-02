@@ -1,8 +1,7 @@
 Firefly.city Website
 ====================
 
-Coming soon...
-
+The website for firefly.city.
 
 License
 -------
